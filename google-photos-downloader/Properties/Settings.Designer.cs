@@ -45,5 +45,17 @@ namespace google_photos_downloader.Properties {
                 this["user"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string localRepositoryLocation {
+            get {
+                return ((string)(this["localRepositoryLocation"]));
+            }
+            set {
+                this["localRepositoryLocation"] = value;
+            }
+        }
     }
 }
