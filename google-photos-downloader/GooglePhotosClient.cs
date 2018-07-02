@@ -28,6 +28,8 @@ namespace google_photos_downloader
         {
             get
             {
+                if (!File.Exists("google.json"))
+                    throw new Exception("google.json does not exist; please see google.json.sample and get an equivalent file set up for your app ID, etc.");
                 if (_config == null)
                     _config = JsonConvert.DeserializeObject<GoogleConfig>(File.ReadAllText("google.json"));
                 return _config;
