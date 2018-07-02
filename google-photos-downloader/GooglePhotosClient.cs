@@ -6,6 +6,7 @@ using System.Threading;
 using google_photos_downloader.Properties;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Util;
+using Google.Apis.Util.Store;
 using Newtonsoft.Json;
 
 namespace google_photos_downloader
@@ -37,7 +38,7 @@ namespace google_photos_downloader
             return api.downloadMediaFile(url, path);
         }
 
-        public List<GooglePhotosMediaObject> getAllMediaObjects(DateTime? date = null,
+        public List<GooglePhotosMediaObject> getAllMediaObjects(DateTime? date ,
             List<GooglePhotosMediaObject> mediaGalleryCollection = null, string paginationToken = null)
         {
             if (mediaGalleryCollection == null) mediaGalleryCollection = new List<GooglePhotosMediaObject>();
@@ -48,8 +49,8 @@ namespace google_photos_downloader
                 pageToken = paginationToken
             });
             var response = JsonConvert.DeserializeObject<MediaGallerySearchResponse>(rawResponse);
-            var onlySetRequired = false; //  
-            if (date.HasValue)
+            var onlySetRequired = false;  
+            if (date.HasValue && response.mediaItems != null)
             {
                 var totalItems = response.mediaItems.Count;
                 response.mediaItems = response.mediaItems.Where(media => media.mediaMetadata.creationTime > date.Value)
@@ -65,6 +66,8 @@ namespace google_photos_downloader
 
         private void authenticate()
         {
+            var currentExecutable = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            var currentExecutionPath = Path.GetDirectoryName(currentExecutable); 
             var authorizationTask = GoogleWebAuthorizationBroker.AuthorizeAsync(
                 new ClientSecrets
                 {
@@ -74,7 +77,7 @@ namespace google_photos_downloader
                 new[] {"https://www.googleapis.com/auth/photoslibrary"},
                 Settings.Default.user,
                 CancellationToken.None,
-                null,
+                new FileDataStore(currentExecutionPath, true),
                 new LocalServerCodeReceiver()
             );
             authorizationTask.Wait();

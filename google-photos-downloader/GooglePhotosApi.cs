@@ -27,14 +27,10 @@ namespace google_photos_downloader
 
         public string query(string uri, object requestBody, Method httpMethod = Method.POST)
         {
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
             var request = new RestRequest(uri, httpMethod);
             request.AddJsonBody(requestBody);
             foreach (var header in headers) request.AddHeader(header.Key, header.Value);
             var response = http.Execute(request);
-            stopwatch.Stop();
-            // this.LogRequest(request, response, stopwatch.ElapsedMilliseconds);
             return response.Content;
         }
 
