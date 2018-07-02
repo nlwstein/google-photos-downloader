@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using google_photos_downloader.Properties;
 using Google.Apis.Auth.OAuth2;
@@ -13,8 +14,8 @@ namespace google_photos_downloader
 {
     internal class GooglePhotosClient
     {
-        private GoogleConfig _config;
         private readonly GooglePhotosApi api;
+        private GoogleConfig _config;
         private bool authenticated;
         private string token;
 
@@ -38,7 +39,7 @@ namespace google_photos_downloader
             return api.downloadMediaFile(url, path);
         }
 
-        public List<GooglePhotosMediaObject> getAllMediaObjects(DateTime? date ,
+        public List<GooglePhotosMediaObject> getAllMediaObjects(DateTime? date,
             List<GooglePhotosMediaObject> mediaGalleryCollection = null, string paginationToken = null)
         {
             if (mediaGalleryCollection == null) mediaGalleryCollection = new List<GooglePhotosMediaObject>();
@@ -49,7 +50,7 @@ namespace google_photos_downloader
                 pageToken = paginationToken
             });
             var response = JsonConvert.DeserializeObject<MediaGallerySearchResponse>(rawResponse);
-            var onlySetRequired = false;  
+            var onlySetRequired = false;
             if (date.HasValue && response.mediaItems != null)
             {
                 var totalItems = response.mediaItems.Count;
@@ -66,8 +67,8 @@ namespace google_photos_downloader
 
         private void authenticate()
         {
-            var currentExecutable = System.Reflection.Assembly.GetExecutingAssembly().Location;
-            var currentExecutionPath = Path.GetDirectoryName(currentExecutable); 
+            var currentExecutable = Assembly.GetExecutingAssembly().Location;
+            var currentExecutionPath = Path.GetDirectoryName(currentExecutable);
             var authorizationTask = GoogleWebAuthorizationBroker.AuthorizeAsync(
                 new ClientSecrets
                 {

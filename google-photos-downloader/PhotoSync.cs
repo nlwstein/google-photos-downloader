@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using google_photos_downloader.Properties;
 using Microsoft.Win32;
 
 namespace google_photos_downloader
@@ -21,18 +22,16 @@ namespace google_photos_downloader
             var maxCreationDate = DateTime.MinValue;
             if (mediaObjects.Count > 0) maxCreationDate = mediaObjects.Max(media => media.mediaMetadata.creationTime);
             Console.WriteLine("Complete!");
-            var path = Properties.Settings.Default.localRepositoryLocation;
+            var path = Settings.Default.localRepositoryLocation;
 
             if (string.IsNullOrWhiteSpace(path))
             {
                 path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + @"\GooglePhotoSync\";
-                Console.WriteLine("localRepositoryLocation was not set in the settings, using {0} as the path...", path);
+                Console.WriteLine("localRepositoryLocation was not set in the settings, using {0} as the path...",
+                    path);
             }
 
-            if (!Directory.Exists(path))
-            {
-                throw new Exception(string.Format("Path {0} does not exist.", path));
-            }
+            if (!Directory.Exists(path)) throw new Exception(string.Format("Path {0} does not exist.", path));
             try
             {
                 Directory.CreateDirectory(path);
